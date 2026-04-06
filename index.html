@@ -3105,6 +3105,14 @@
       document.getElementById('navLinks').classList.toggle('open');
     }
 
+    // Toggle dropdown on mobile
+    document.querySelector('.dropdown-toggle').addEventListener('click', function(e) {
+      if (window.innerWidth <= 768) {
+        e.preventDefault();
+        this.parentElement.classList.toggle('active');
+      }
+    });
+
     window.addEventListener('scroll', () => {
       const nav = document.getElementById('navbar');
       nav.classList.toggle('scrolled', window.scrollY > 20);
