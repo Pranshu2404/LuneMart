@@ -1934,19 +1934,19 @@
       <span></span><span></span><span></span>
     </div>
     <ul class="nav-links" id="navLinks">
-      <li><a href="#" onclick="showPage('home')">Home</a></li>
-      <li><a href="#" onclick="showPage('about')">About</a></li>
-      <li><a href="#" onclick="showPage('contact')">Contact</a></li>
-      <li><a href="#" onclick="showPage('terms')">Terms & Conditions</a></li>
+      <li><a href="/" onclick="showPage('home')">Home</a></li>
+      <li><a href="/about" onclick="showPage('about')">About</a></li>
+      <li><a href="/contact" onclick="showPage('contact')">Contact</a></li>
+      <li><a href="/terms" onclick="showPage('terms')">Terms & Conditions</a></li>
       <li class="dropdown">
         <a href="#" class="dropdown-toggle">Policies</a>
         <div class="dropdown-menu">
-          <a href="#" onclick="showPage('privacy')">Privacy Policy</a>
-          <a href="#" onclick="showPage('refund')">Refund Policy</a>
-          <a href="#" onclick="showPage('cookie')">Cookie Policy</a>
+          <a href="/privacy" onclick="showPage('privacy')">Privacy Policy</a>
+          <a href="/refund" onclick="showPage('refund')">Refund Policy</a>
+          <a href="/cookie" onclick="showPage('cookie')">Cookie Policy</a>
         </div>
       </li>
-      <li><a href="#" onclick="showPage('home')" class="nav-cta">Download App</a></li>
+      <li><a href="/" onclick="showPage('home')" class="nav-cta">Download App</a></li>
     </ul>
   </nav>
 
@@ -3048,25 +3048,25 @@
       <div class="footer-col">
         <h4>Company</h4>
         <ul>
-          <li><a href="#" onclick="showPage('about')">About Us</a></li>
-          <li><a href="#" onclick="showPage('contact')">Contact</a></li>
+          <li><a href="/about" onclick="showPage('about')">About Us</a></li>
+          <li><a href="/contact" onclick="showPage('contact')">Contact</a></li>
     
         </ul>
       </div>
       <div class="footer-col">
         <h4>Legal</h4>
         <ul>
-          <li><a href="#" onclick="showPage('privacy')">Privacy Policy</a></li>
-          <li><a href="#" onclick="showPage('terms')">Terms & Conditions</a></li>
-          <li><a href="#" onclick="showPage('refund')">Refund Policy</a></li>
-          <li><a href="#" onclick="showPage('cookie')">Cookie Policy</a></li>
+          <li><a href="/privacy" onclick="showPage('privacy')">Privacy Policy</a></li>
+          <li><a href="/terms" onclick="showPage('terms')">Terms & Conditions</a></li>
+          <li><a href="/refund" onclick="showPage('refund')">Refund Policy</a></li>
+          <li><a href="/cookie" onclick="showPage('cookie')">Cookie Policy</a></li>
         </ul>
       </div>
       <div class="footer-col">
         <h4>Support</h4>
         <ul>
-          <li><a href="#" onclick="showPage('contact')">Help Center</a></li>
-          <li><a href="#" onclick="showPage('contact')">Contact Us</a></li>
+          <li><a href="/contact" onclick="showPage('contact')">Help Center</a></li>
+          <li><a href="/contact" onclick="showPage('contact')">Contact Us</a></li>
         </ul>
       </div>
     </div>
@@ -3086,13 +3086,34 @@
   </div>
 
   <script>
-    function showPage(name) {
+    function getPageNameFromPath() {
+      const path = window.location.pathname.replace(/\/index\.html$/, '').replace(/\/$/, '');
+      const page = path.split('/').pop().toLowerCase();
+      if (!page || page === 'index.html') return 'home';
+      return document.getElementById(page) ? page : 'home';
+    }
+
+    function showPage(name, updatePath = true) {
+      const pageName = name ? name.toLowerCase() : getPageNameFromPath();
+      const targetPage = document.getElementById(pageName) || document.getElementById('home');
+
       document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
-      document.getElementById(name).classList.add('active');
+      targetPage.classList.add('active');
+
+      if (updatePath) {
+        const newPath = pageName === 'home' ? '/' : `/${pageName}`;
+        if (window.location.pathname !== newPath) {
+          window.history.pushState({ page: pageName }, '', newPath);
+        }
+      }
+
       window.scrollTo({ top: 0, behavior: 'smooth' });
       // close mobile menu
       document.getElementById('navLinks').classList.remove('open');
     }
+
+    window.addEventListener('popstate', () => showPage(getPageNameFromPath(), false));
+    window.addEventListener('DOMContentLoaded', () => showPage(getPageNameFromPath(), false));
 
     function toggleMenu() {
       document.getElementById('navLinks').classList.toggle('open');
